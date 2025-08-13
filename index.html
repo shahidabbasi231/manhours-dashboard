@@ -1,1 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QHSE Coordinator Performance Dashboard - Muhammad Shahid Abbasi</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    <style>
+        :root {
+            --qhse-primary: #1e40af;
+            --qhse-secondary: #059669;
+            --qhse-warning: #f59e0b;
+            --qhse-danger: #dc2626;
+            --qhse-info: #0891b2;
+        }
+        
+        .qhse-gradient {
+            background: linear-gradient(135deg, var(--qhse-primary) 0%, var(--qhse-secondary) 100%);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .kpi-meter {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--qhse-secondary) 0deg, var(--qhse-secondary) var(--percentage), #e5e7eb var(--percentage), #e5e7eb 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .kpi-meter::before {
+            content: '';
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+        
+        .activity-card {
+            transition: all 0.3s ease;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        @media print {
+            body { 
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header Section -->
+    <header class="qhse-gradient text-white py-6 mb-6">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">QHSE Performance Dashboard</h1>
+                    <p class="text-blue-100">Quality, Health, Safety & Environment Coordination</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-blue-100">Last Updated</div>
+                    <div class="text-xl font-semibold" id="lastUpdated"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 space-y-6">
+        <!-- Personal Information Section -->
+        <div class="bg-white rounded-lg card-shadow p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                <i class="fas fa-user-tie text-blue-600 mr-2"></i>Employee Information
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Full Name</div>
+                    <div class="text-lg font-semibold text-gray-800">Muhammad Shahid Abbasi</div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Employee ID</div>
+                    <div class="text-lg font-semibold text-gray-800">16985</div>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Position</div>
+                    <div class="text-lg font-semibold text-gray-800">QHSE Coordinator</div>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Company</div>
+                    <div class="text-lg font-semibold text-gray-800">NESR KSA</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time Period Analysis -->
+        <div class="bg-white rounded-lg card-shadow p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                <i class="fas fa-clock text-green-600 mr-2"></i>Time Period Analysis
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-lg">
+                    <div class="text-sm opacity-90">Duration</div>
+                    <div class="text-2xl font-bold">14 Months</div>
+                    <div class="text-xs opacity-75">Jun 2024 - Aug 2025</div>
+                </div>
+                <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-lg">
+                    <div class="text-sm opacity-90">Total Hours</div>
+                    <div class="text-2xl font-bold">2,519</div>
+                    <div class="text-xs opacity-75">Logged Hours</div>
+                </div>
+                <div class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-4 rounded-lg">
+                    <div class="text-sm opacity-90">Daily Average</div>
+                    <div class="text-2xl font-bold">9.88</div>
+                    <div class="text-xs opacity-75">Hours per Day</div>
+                </div>
+                <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-lg">
+                    <div class="text-sm opacity-90">Working Days</div>
+                    <div class="text-2xl font-bold">255</div>
+                    <div class="text-xs opacity-75">Standard Pattern</div>
+                </div>
+                <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white p-4 rounded-lg">
+                    <div class="text-sm opacity-90">Efficiency</div>
+                    <div class="text-2xl font-bold">98.8%</div>
+                    <div class="text-xs opacity-75">Performance Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Distribution Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Activity Pie Chart -->
+            <div class="lg:col-span-1 bg-white rounded-lg card-shadow p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-chart-pie text-blue-600 mr-2"></i>Activity Distribution
+                </h3>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="activityPieChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Monthly Hours Tracking -->
+            <div class="lg:col-span-2 bg-white rounded-lg card-shadow p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-chart-bar text-green-600 mr-2"></i>Monthly Hours Tracking
+                </h3>
+                <div style="height: 300px;">
+                    <canvas id="monthlyHoursChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Matrix Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Driving Assessments -->
+            <div class="activity-card bg-white rounded-lg card-shadow p-6 border-l-4 border-blue-500">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-blue-600">
+                        <i class="fas fa-car text-2xl"></i>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gray-800">61%</div>
+                        <div class="text-sm text-gray-600">1,530 hrs</div>
+                    </div>
+                </div>
+                <h4 class="text-lg font-semibold text-gray-800 mb-2">Driving Assessments</h4>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Daily Average:</span>
+                        <span class="font-medium">6.1 hours</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">LTC Evaluations:</span>
+                        <span class="font-medium">Active</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-500 h-2 rounded-full" style="width: 61%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LTC Management -->
+            <div class="activity-card bg-white rounded-lg card-shadow p-6 border-l-4 border-green-500">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-green-600">
+                        <i class="fas fa-users-cog text-2xl"></i>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gray-800">30%</div>
+                        <div class="text-sm text-gray-600">765 hrs</div>
+                    </div>
+                </div>
+                <h4 class="text-lg font-semibold text-gray-800 mb-2">LTC Management</h4>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Meetings:</span>
+                        <span class="font-medium">Tracked</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Coordination:</span>
+                        <span class="font-medium">Active</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: 30%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Administrative Tasks -->
+            <div class="activity-card bg-white rounded-lg card-shadow p-6 border-l-4 border-yellow-500">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-yellow-600">
+                        <i class="fas fa-file-alt text-2xl"></i>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gray-800">5%</div>
+                        <div class="text-sm text-gray-600">128 hrs</div>
+                    </div>
+                </div>
+                <h4 class="text-lg font-semibold text-gray-800 mb-2">Administrative Tasks</h4>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Reports:</span>
+                        <span class="font-medium">Generated</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Documentation:</span>
+                        <span class="font-medium">Current</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 5%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LTC Audits -->
+            <div class="activity-card bg-white rounded-lg card-shadow p-6 border-l-4 border-red-500">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-red-600">
+                        <i class="fas fa-search text-2xl"></i>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gray-800">4%</div>
+                        <div class="text-sm text-gray-600">96 hrs</div>
+                    </div>
+                </div>
+                <h4 class="text-lg font-semibold text-gray-800 mb-2">LTC Audits</h4>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Planning:</span>
+                        <span class="font-medium">Complete</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Execution:</span>
+                        <span class="font-medium">Documented</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-red-500 h-2 rounded-full" style="width: 4%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Performance Meters -->
+        <div class="bg-white rounded-lg card-shadow p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-tachometer-alt text-purple-600 mr-2"></i>Key Performance Indicators
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Target Completion KPI -->
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-green-400 to-green-600 rounded-full text-white mb-4">
+                        <div>
+                            <div class="text-2xl font-bold">95%</div>
+                            <div class="text-xs opacity-90">Target</div>
+                        </div>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-800">Target Completion</h4>
+                    <p class="text-sm text-gray-600">Monthly objectives met</p>
+                </div>
+
+                <!-- Quality Score KPI -->
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full text-white mb-4">
+                        <div>
+                            <div class="text-2xl font-bold">92%</div>
+                            <div class="text-xs opacity-90">Quality</div>
+                        </div>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-800">Quality Score</h4>
+                    <p class="text-sm text-gray-600">Assessment accuracy</p>
+                </div>
+
+                <!-- Efficiency Rate KPI -->
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full text-white mb-4">
+                        <div>
+                            <div class="text-2xl font-bold">88%</div>
+                            <div class="text-xs opacity-90">Efficiency</div>
+                        </div>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-800">Efficiency Rate</h4>
+                    <p class="text-sm text-gray-600">Time utilization</p>
+                </div>
+
+                <!-- Safety Compliance KPI -->
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full text-white mb-4">
+                        <div>
+                            <div class="text-2xl font-bold">100%</div>
+                            <div class="text-xs opacity-90">Safety</div>
+                        </div>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-800">Safety Compliance</h4>
+                    <p class="text-sm text-gray-600">Zero incidents</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="bg-white rounded-lg card-shadow p-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Dashboard Controls</h3>
+                    <button onclick="refreshData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh Data
+                    </button>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        <option>All Activities</option>
+                        <option>Driving Assessments</option>
+                        <option>LTC Management</option>
+                        <option>Administrative Tasks</option>
+                        <option>LTC Audits</option>
+                    </select>
+                    <button onclick="exportData()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-download mr-2"></i>Export Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-12 bg-gray-800 text-white py-6">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p>&copy; 2025 NESR KSA - QHSE Performance Dashboard</p>
+            <p class="text-sm text-gray-400 mt-2">Generated on <span id="generatedDate"></span></p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+        });
+
+        function initializeDashboard() {
+            updateTimestamps();
+            createActivityPieChart();
+            createMonthlyHoursChart();
+        }
+
+        function updateTimestamps() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString();
+            document.getElementById('generatedDate').textContent = now.toLocaleDateString();
+        }
+
+        function createActivityPieChart() {
+            const ctx = document.getElementById('activityPieChart').getContext('2d');
+            
+            const data = {
+                labels: ['Driving Assessments', 'LTC Management', 'Administrative Tasks', 'LTC Audits'],
+                datasets: [{
+                    data: [1530, 765, 128, 96],
+                    backgroundColor: [
+                        '#3B82F6', // Blue
+                        '#10B981', // Green
+                        '#F59E0B', // Yellow
+                        '#EF4444'  // Red
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            };
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((context.parsed / total) * 100);
+                                    return `${context.label}: ${context.parsed} hrs (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createMonthlyHoursChart() {
+            const ctx = document.getElementById('monthlyHoursChart').getContext('2d');
+            
+            const monthlyData = [
+                180, 185, 190, 175, 195, 188, 192, 178, 205, 198, 185, 190, 195, 163
+            ];
+
+            const labels = [
+                'Jun 2024', 'Jul 2024', 'Aug 2024', 'Sep 2024', 'Oct 2024', 'Nov 2024',
+                'Dec 2024', 'Jan 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025', 'May 2025',
+                'Jun 2025', 'Aug 2025'
+            ];
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Monthly Hours',
+                        data: monthlyData,
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Hours'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Month'
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        function refreshData() {
+            // Simulate data refresh
+            updateTimestamps();
+            
+            // Add visual feedback
+            const button = event.target;
+            const icon = button.querySelector('i');
+            icon.classList.add('fa-spin');
+            
+            setTimeout(() => {
+                icon.classList.remove('fa-spin');
+                alert('Dashboard data refreshed successfully!');
+            }, 1500);
+        }
+
+        function exportData() {
+            // Create CSV data
+            const csvData = [
+                ['Activity', 'Hours', 'Percentage'],
+                ['Driving Assessments', '1530', '61%'],
+                ['LTC Management', '765', '30%'],
+                ['Administrative Tasks', '128', '5%'],
+                ['LTC Audits', '96', '4%'],
+                ['', '', ''],
+                ['Total Hours', '2519', '100%'],
+                ['Duration', '14 months', ''],
+                ['Daily Average', '9.88 hours', ''],
+                ['Employee', 'Muhammad Shahid Abbasi', ''],
+                ['ID', '16985', ''],
+                ['Position', 'QHSE Coordinator', ''],
+                ['Company', 'NESR KSA', '']
+            ];
+
+            let csvContent = csvData.map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'QHSE_Performance_Dashboard_' + new Date().toISOString().split('T')[0] + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
+
 
