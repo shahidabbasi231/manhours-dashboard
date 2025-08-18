@@ -353,7 +353,7 @@ async def get_certifications(driver_id: Optional[str] = None):
     if driver_id:
         query["driver_id"] = driver_id
     
-    certifications = await db.certifications.find(query).to_list(1000)
+    certifications = await db.certifications.find(query, {"_id": 0}).to_list(1000)
     # Update status based on current date
     for cert in certifications:
         cert["status"] = get_certification_status(date.fromisoformat(cert["expiry_date"]))
