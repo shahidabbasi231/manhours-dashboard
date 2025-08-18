@@ -333,7 +333,7 @@ async def update_training_progress(progress_id: str, progress_update: TrainingPr
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Training progress not found")
     
-    updated_progress = await db.training_progress.find_one({"id": progress_id})
+    updated_progress = await db.training_progress.find_one({"id": progress_id}, {"_id": 0})
     return TrainingProgress(**updated_progress)
 
 # Certification Management
