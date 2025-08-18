@@ -142,6 +142,9 @@ class TruckDriverTrainingAPITester:
         success, data = self.make_request('GET', 'drivers')
         if success:
             if isinstance(data, list):
+                # Store existing drivers for other tests if we don't have any created ones
+                if not self.created_resources['drivers'] and len(data) > 0:
+                    self.created_resources['drivers'] = data
                 details = f"- Found {len(data)} drivers"
                 if len(data) > 0:
                     details += f", First driver: {data[0].get('first_name')} {data[0].get('last_name')}"
