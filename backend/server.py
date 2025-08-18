@@ -218,7 +218,7 @@ async def create_driver(driver: DriverCreate):
 
 @api_router.get("/drivers", response_model=List[Driver])
 async def get_drivers():
-    drivers = await db.drivers.find({"is_active": True}).to_list(1000)
+    drivers = await db.drivers.find({"is_active": True}, {"_id": 0}).to_list(1000)
     return [Driver(**driver) for driver in drivers]
 
 @api_router.get("/drivers/{driver_id}", response_model=Driver)
