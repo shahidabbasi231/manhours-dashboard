@@ -182,6 +182,17 @@ class DashboardSummary(BaseModel):
     recent_completions: int
 
 # Helper functions
+def serialize_dates(obj):
+    """Convert date and datetime objects to ISO format strings for MongoDB storage"""
+    if isinstance(obj, dict):
+        return {key: serialize_dates(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [serialize_dates(item) for item in obj]
+    elif isinstance(obj, (date, datetime)):
+        return obj.isoformat()
+    else:
+        return obj
+
 def get_certification_status(expiry_date: date) -> CertificationStatus:
     today = date.today()
     days_until_expiry = (expiry_date - today).days
