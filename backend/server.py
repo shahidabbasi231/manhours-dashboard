@@ -428,7 +428,7 @@ async def get_dashboard_summary():
 @api_router.get("/analytics/driver-progress/{driver_id}")
 async def get_driver_progress_analytics(driver_id: str):
     # Get driver info
-    driver = await db.drivers.find_one({"id": driver_id, "is_active": True})
+    driver = await db.drivers.find_one({"id": driver_id, "is_active": True}, {"_id": 0})
     if not driver:
         raise HTTPException(status_code=404, detail="Driver not found")
     
