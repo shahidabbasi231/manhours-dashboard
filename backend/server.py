@@ -644,7 +644,9 @@ async def initialize_default_modules():
         existing = await db.training_modules.find_one({"name": module_data["name"]})
         if not existing:
             module_obj = TrainingModule(**module_data)
-            await db.training_modules.insert_one(module_obj.dict())
+            # Serialize dates for MongoDB storage
+            serialized_data = serialize_dates(module_obj.dict())
+            await db.training_modules.insert_one(serialized_data)
             created_modules.append(module_obj)
     
     return {"message": f"Created {len(created_modules)} default training modules", "modules": created_modules}
