@@ -318,6 +318,9 @@ async def update_training_progress(progress_id: str, progress_update: TrainingPr
     if update_data.get("status") == TrainingStatus.IN_PROGRESS and "start_date" not in update_data:
         update_data["start_date"] = date.today()
     
+    # Serialize dates for MongoDB storage
+    serialized_update_data = serialize_dates(update_data)
+    
     # Increment attempts if status is being updated
     if "status" in update_data:
         await db.training_progress.update_one(
@@ -327,7 +330,7 @@ async def update_training_progress(progress_id: str, progress_update: TrainingPr
     
     result = await db.training_progress.update_one(
         {"id": progress_id},
-        {"$set": update_data}
+        {"$set": serialized_update_data}
     )
     
     if result.matched_count == 0:
