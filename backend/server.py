@@ -287,7 +287,9 @@ async def create_training_progress(progress: TrainingProgressCreate):
     
     progress_dict = progress.dict()
     progress_obj = TrainingProgress(**progress_dict)
-    result = await db.training_progress.insert_one(progress_obj.dict())
+    # Serialize dates for MongoDB storage
+    serialized_data = serialize_dates(progress_obj.dict())
+    result = await db.training_progress.insert_one(serialized_data)
     return progress_obj
 
 @api_router.get("/training-progress")
