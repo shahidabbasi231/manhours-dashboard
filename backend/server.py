@@ -211,7 +211,9 @@ def get_certification_status(expiry_date: date) -> CertificationStatus:
 async def create_driver(driver: DriverCreate):
     driver_dict = driver.dict()
     driver_obj = Driver(**driver_dict)
-    result = await db.drivers.insert_one(driver_obj.dict())
+    # Serialize dates for MongoDB storage
+    serialized_data = serialize_dates(driver_obj.dict())
+    result = await db.drivers.insert_one(serialized_data)
     return driver_obj
 
 @api_router.get("/drivers", response_model=List[Driver])
