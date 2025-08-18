@@ -194,6 +194,9 @@ class TruckDriverTrainingAPITester:
         success, data = self.make_request('GET', 'training-progress')
         if success:
             if isinstance(data, list):
+                # Store existing progress for other tests if we don't have any created ones
+                if not self.created_resources['progress'] and len(data) > 0:
+                    self.created_resources['progress'] = data
                 details = f"- Found {len(data)} progress records"
             else:
                 success = False
