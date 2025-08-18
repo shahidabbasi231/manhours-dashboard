@@ -302,7 +302,7 @@ async def get_training_progress(driver_id: Optional[str] = None, module_id: Opti
     if module_id:
         query["module_id"] = module_id
     
-    progress_list = await db.training_progress.find(query).to_list(1000)
+    progress_list = await db.training_progress.find(query, {"_id": 0}).to_list(1000)
     return [TrainingProgress(**progress) for progress in progress_list]
 
 @api_router.put("/training-progress/{progress_id}", response_model=TrainingProgress)
