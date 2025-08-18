@@ -259,7 +259,9 @@ async def delete_driver(driver_id: str):
 async def create_training_module(module: TrainingModuleCreate):
     module_dict = module.dict()
     module_obj = TrainingModule(**module_dict)
-    result = await db.training_modules.insert_one(module_obj.dict())
+    # Serialize dates for MongoDB storage
+    serialized_data = serialize_dates(module_obj.dict())
+    result = await db.training_modules.insert_one(serialized_data)
     return module_obj
 
 @api_router.get("/training-modules", response_model=List[TrainingModule])
