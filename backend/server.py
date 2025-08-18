@@ -365,13 +365,13 @@ async def get_expiring_certifications():
     thirty_days_from_now = date.today() + timedelta(days=30)
     certifications = await db.certifications.find({
         "expiry_date": {"$lte": thirty_days_from_now.isoformat()}
-    }).to_list(1000)
+    }, {"_id": 0}).to_list(1000)  # Exclude _id field
     
     # Update status and get driver info
     result = []
     for cert in certifications:
         cert["status"] = get_certification_status(date.fromisoformat(cert["expiry_date"]))
-        driver = await db.drivers.find_one({"id": cert["driver_id"]})
+        driver = await db.drivers.find_one({"id": cert["driver_id"]}, {"_id": 0})  # Exclude _id field
         if driver:
             cert_with_driver = {**cert, "driver_name": f"{driver['first_name']} {driver['last_name']}"}
             result.append(cert_with_driver)
