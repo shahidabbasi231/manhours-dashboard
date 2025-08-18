@@ -120,7 +120,7 @@ class TruckDriverTrainingAPITester:
             "phone": "555-0123",
             "hire_date": "2024-01-15",
             "license_number": "DL123456789",
-            "license_class": "CDL_A",
+            "license_class": "CDL Class A",
             "license_expiry": "2025-12-31",
             "date_of_birth": "1985-05-15",
             "address": "123 Test Street, Test City, TC 12345",
