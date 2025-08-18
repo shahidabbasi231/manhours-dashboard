@@ -233,9 +233,12 @@ async def update_driver(driver_id: str, driver_update: DriverUpdate):
     update_data = {k: v for k, v in driver_update.dict().items() if v is not None}
     update_data["updated_at"] = datetime.utcnow()
     
+    # Serialize dates for MongoDB storage
+    serialized_update_data = serialize_dates(update_data)
+    
     result = await db.drivers.update_one(
         {"id": driver_id}, 
-        {"$set": update_data}
+        {"$set": serialized_update_data}
     )
     
     if result.matched_count == 0:
