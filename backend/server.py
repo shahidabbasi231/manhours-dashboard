@@ -478,7 +478,7 @@ async def get_driver_progress_analytics(driver_id: str):
 @api_router.get("/analytics/module-performance/{module_id}")
 async def get_module_performance_analytics(module_id: str):
     # Get module info
-    module = await db.training_modules.find_one({"id": module_id})
+    module = await db.training_modules.find_one({"id": module_id}, {"_id": 0})
     if not module:
         raise HTTPException(status_code=404, detail="Training module not found")
     
