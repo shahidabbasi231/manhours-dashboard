@@ -340,7 +340,9 @@ async def create_certification(cert: CertificationCreate):
     cert_dict = cert.dict()
     cert_dict["status"] = get_certification_status(cert.expiry_date)
     cert_obj = Certification(**cert_dict)
-    result = await db.certifications.insert_one(cert_obj.dict())
+    # Serialize dates for MongoDB storage
+    serialized_data = serialize_dates(cert_obj.dict())
+    result = await db.certifications.insert_one(serialized_data)
     return cert_obj
 
 @api_router.get("/certifications")
