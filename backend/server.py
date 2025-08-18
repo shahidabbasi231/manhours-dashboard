@@ -241,7 +241,7 @@ async def update_driver(driver_id: str, driver_update: DriverUpdate):
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Driver not found")
     
-    updated_driver = await db.drivers.find_one({"id": driver_id})
+    updated_driver = await db.drivers.find_one({"id": driver_id}, {"_id": 0})
     return Driver(**updated_driver)
 
 @api_router.delete("/drivers/{driver_id}")
