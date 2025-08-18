@@ -223,7 +223,7 @@ async def get_drivers():
 
 @api_router.get("/drivers/{driver_id}", response_model=Driver)
 async def get_driver(driver_id: str):
-    driver = await db.drivers.find_one({"id": driver_id, "is_active": True})
+    driver = await db.drivers.find_one({"id": driver_id, "is_active": True}, {"_id": 0})
     if not driver:
         raise HTTPException(status_code=404, detail="Driver not found")
     return Driver(**driver)
