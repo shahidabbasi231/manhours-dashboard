@@ -271,7 +271,7 @@ async def get_training_modules():
 
 @api_router.get("/training-modules/{module_id}", response_model=TrainingModule)
 async def get_training_module(module_id: str):
-    module = await db.training_modules.find_one({"id": module_id})
+    module = await db.training_modules.find_one({"id": module_id}, {"_id": 0})
     if not module:
         raise HTTPException(status_code=404, detail="Training module not found")
     return TrainingModule(**module)
