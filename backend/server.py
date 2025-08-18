@@ -266,7 +266,7 @@ async def create_training_module(module: TrainingModuleCreate):
 
 @api_router.get("/training-modules", response_model=List[TrainingModule])
 async def get_training_modules():
-    modules = await db.training_modules.find().to_list(1000)
+    modules = await db.training_modules.find({}, {"_id": 0}).to_list(1000)
     return [TrainingModule(**module) for module in modules]
 
 @api_router.get("/training-modules/{module_id}", response_model=TrainingModule)
